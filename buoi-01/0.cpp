@@ -2,9 +2,14 @@
 #include <iostream>
 using namespace std;
 int main() {
-    for (int i = 1; i <= 10; i++)
+    int a = 100;
+
+    // while loop
+    while (a <= 10)
     {
-        cout << i << endl;
+        cout << a << endl;
+        a++;
     }
+    // co the cau lenh trong while khong duoc thuc thi lan nao
     return 0;
 }
