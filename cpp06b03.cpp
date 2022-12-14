@@ -22,7 +22,7 @@ int main() {
     int id = 0; // chỉ số của hàng có nhiều snt nhất
 
     for (int i = 1; i <= n; i++) {
-        int cnt = 0; // count
+        int cnt = 0; // đếm số lượng snt trên hàng i
         for (int j = 1; j <= m; j++)
             if (isPrime(a[i][j])) cnt++;
         
