@@ -16,7 +16,10 @@ int main() {
     // s.find(x) -> vị trí đầu tiên của xâu x trong s. [0-> s.length()-1]
     // s.find(x, pos) -> vị trí đầu tiên kể từ vị trí pos của xâu x trong s. [0-> s.length()-1]
     // s.rfind(x) -> vị trí đầu tiên từ phải sang của xâu x trong s. [0-> s.length()-1]
-    cout << s.find("u") << endl;
+    // Nếu không tìm được xâu con thoả mãn: find(x) != string::npos
+    int p = s.find("u");
+    if (p == string::npos)
+        cout << p << endl;
 
     // s.erase(pos, k) -> xoá k kí tự kể từ vị trí pos
     // s.erase(pos) -> xoá các kí tự kể từ vị trí pos
