@@ -32,7 +32,7 @@ int main(void) {
         printf("%d ", cur);
         root = insert(root, cur);
     }
-    printf("\n");
+    printf("\n   Them du lieu vao BST thanh cong!\n");
     fclose(fin);
 
     // Cau b
@@ -44,8 +44,8 @@ int main(void) {
     printf("c. Nhap gia tri can tim trong cay: ");
     int x;
     scanf("%d", &x);
-    if (find_value(root, x) == 1) printf("%d co xuat hien trong cay.\n");
-    else printf("   %d khong xuat hien trong cay.\n");
+    if (find_value(root, x) == 1) printf("-> %d co xuat hien trong cay.\n");
+    else printf("-> %d khong xuat hien trong cay.\n");
 
     // Cau d
     printf("d. Tong cac nut la trong cay la: %d\n", sum_of_total_leaves(root));
