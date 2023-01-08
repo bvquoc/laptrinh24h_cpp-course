@@ -10,14 +10,36 @@ char w[10];
 FILE *f;
 
 void read_input();
-
-void process();
-
+void solveRain();
+void solveSun();
+void solveCloud();
+void solveFog();
+void solveWind();
 
 int main(void) {
     read_input();
     printf("%d %d %d %d %s\n", nep, dc, dg, ld, w);
-    process();
+    printf("%f %f\n", nc, ng);
+
+    if (strcmp(w,"Rain") == 0) {
+        solveRain();
+    }
+
+    if (strcmp(w,"Sun") == 0) {
+        solveSun();
+    }
+
+    if (strcmp(w,"Cloud") == 0) {
+        solveCloud();
+    }
+
+    if (strcmp(w,"Fog") == 0) {
+        solveFog();
+    }
+
+    if (strcmp(w,"Wind") == 0) {
+        solveWind();
+    }
 
     return 0;
 }
@@ -28,7 +50,7 @@ float calc(int so_nep, int so_giay) {
 
 void solveNegative() {
     if (dc < 0) {
-        FILE *f = fopen("output.out", "w");
+        f = fopen("output.out", "w");
         int slg = trunc(nep / ng);
         if (slg > ld) slg = ld;
         fprintf(f, "0 %d %.3f", slg, calc(0, slg));
@@ -36,7 +58,7 @@ void solveNegative() {
         exit(0);
     }
     if (dg < 0) {
-        FILE *f = fopen("output.out", "w");
+        f = fopen("output.out", "w");
         int slc = trunc(nep / nc);
         if (slc > ld) slc = ld;
         fprintf(f, "%d 0 %.3f", slc, calc(slc, 0));
@@ -58,11 +80,47 @@ int la_so_ban_be(int a, int b) {
 
 
 void solveRain() {
+    solveNegative();
 
-}
+    // int slc = 0, slg = 0;
+    // float nep_tra_lai = 2e9;
 
-void solveSun() {
+    // float k = trunc(nep / (nc + ng) * 2);
+    // if (nc > ng) {
+    //     for (int i = tmp; i >= 0; i--) {
+    //         if (i > ld || i * nc > nep) continue;
+    //         for (int j = ld - i; j >= 0; j--) {
+    //             if (j > ld-i || j * ng > nep - i * nc) continue;
+    //             float cur = calc(i, j);
+    //             // fprintf(f, "%d %d %.3f\n", i, j, cur);
+    //             if (cur < nep_tra_lai) {
+    //                 nep_tra_lai = cur;
+    //                 slc = i;
+    //                 slg = j;
+    //             }
+    //         }
+    //     }
+    // } else { // nc <= ng
+    //     for (int j = tmp; j >= 0; j--) {
+    //         if (j > ld || j * ng > nep) continue;
+    //         for (int i = ld - j; i >= 0; i--) {
+    //             if (i > ld-j || i * nc > nep - j * ng) continue;
+    //             float cur = calc(i, j);
+    //             // fprintf(f, "%d %d %.3f\n", i, j, cur);
+    //             if (cur < nep_tra_lai) {
+    //                 nep_tra_lai = cur;
+    //                 slc = i;
+    //                 slg = j;
+    //             }
+    //         }
+    //     }
+    // }
 
+    
+
+    
+
+    fprintf(f, "%d %d %.3f\n", slc, slg, calc(slc, slg));
 }
 
 
@@ -72,6 +130,41 @@ void solveCloud() {
         fclose(f);
         exit(0);
     }
+
+    solveNegative();
+
+    int slg = trunc(nep / ng);
+    float tg = slg * ng;
+    int slc = trunc((nep - tg) / nc);
+    float tc = slc * nc;
+
+    float nep_tra_lai = calc(slc, slg);
+    if (slg + slc <= ld && ng >= nc) {
+        fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+        exit(0);
+    }
+
+    slg = 0; slc = 0;
+    nep_tra_lai = 2e9;
+
+    for (int j = ld; j >= 1; j--) {
+        tg = j * ng; 
+        if (tg > nep) continue;
+        float cur = nep - tg;
+        int i = trunc(cur / nc);
+        if (i > ld - j) i = ld - j;
+
+        cur = calc(i, j);
+        if (nep_tra_lai > cur) {
+            nep_tra_lai = cur;
+            slc = i;
+            slg = j;
+        }
+    }
+
+    nep_tra_lai = calc(slc, slg);
+    fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+    exit(0);
 }
 
 void solveFog() {
@@ -84,50 +177,59 @@ void solveFog() {
 void solveWind() {
     solveNegative();
 
+    int slc = trunc(nep / nc);
+    float tc = slc * nc;
+    int slg = trunc((nep - tc) / ng);
+    float tg = slg * ng;
 
-    int slc = trunc(nep / nc), slg = 0;
-    float tc = slc * nc, tg;
-    float nep_tra_lai = 2e9;
+    float nep_tra_lai = calc(slc, slg);
+    if (slc + slg <= ld && nc >= ng) {
+        fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+        exit(0);
+    }
+
+    slc = 0; slg = 0;
+    nep_tra_lai = 2e9;
+
     for (int i = ld; i >= 1; i--) {
-        if (i * nc > nep) continue;
-        float cur = nep - i * nc;
+        tc = i * nc; 
+        if (tc > nep) continue;
+        float cur = nep - tc;
         int j = trunc(cur / ng);
-        if (i + j > ld) j = ld - i;
-        // if (j == 0) continue;
-        // if (j > i) continue;
+        if (j > ld - i) j = ld - i;
 
         cur = calc(i, j);
-        fprintf(f, "%d %d %f\n", i, j, cur);
+        // fprintf(f, "%d %d %f\n", i, j, cur);
 
-        // if (nep_tra_lai > cur) {
-        //     nep_tra_lai = cur;
-        //     sl_chung = i;
-        //     sl_giay = j;
-        // }
+        if (nep_tra_lai > cur) {
+            nep_tra_lai = cur;
+            slc = i;
+            slg = j;
+        }
     }
 
+    nep_tra_lai = calc(slc, slg);
+    fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+    exit(0);
 }
 
-void process() {
-    if (strcmp(w,"Rain") == 0) {
-        solveRain();
-    }
+void solveSun() {
+    int X[5][6] = {
+        {  5,  7, 10, 12, 15, 20 },
+        { 20,  5,  7, 10, 12, 15 },
+        { 15, 20,  5,  7, 10, 12 },
+        { 12, 15, 20,  5,  7, 10 },
+        { 10, 12, 15, 20,  5,  7}
+    };
+    int x = X[ld % 5][dc % 6];
+    nep += x % nep;
+    ld -= x;
+    if (ld < 0) ld = 0;
 
-    if (strcmp(w,"Sun") == 0) {
-        solveSun();
-    }
-
-    if (strcmp(w,"Cloud") == 0) {
-        solveCloud();
-    }
-
-    if (strcmp(w,"Fog") == 0) {
-        solveFog();
-    }
-
-    if (strcmp(w,"Wind") == 0) {
-        solveWind();
-    }
+    const int k = (dc + dg) % 3;
+    if (k == 0) solveRain();
+    if (k == 1) solveWind();
+    if (k == 2) solveCloud();
 }
 
 void read_input() {
@@ -151,5 +253,4 @@ void read_input() {
     nc = dc * dc;
     ng = (dg * dg * PI) / 4;
 
-    printf("%f %f\n", nc, ng);
 }
