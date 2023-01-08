@@ -82,44 +82,117 @@ int la_so_ban_be(int a, int b) {
 void solveRain() {
     solveNegative();
 
-    // int slc = 0, slg = 0;
-    // float nep_tra_lai = 2e9;
+    int slc = 0, slg = 0;
+    float nep_tra_lai = 2e9;
 
-    // float k = trunc(nep / (nc + ng) * 2);
-    // if (nc > ng) {
-    //     for (int i = tmp; i >= 0; i--) {
-    //         if (i > ld || i * nc > nep) continue;
-    //         for (int j = ld - i; j >= 0; j--) {
-    //             if (j > ld-i || j * ng > nep - i * nc) continue;
-    //             float cur = calc(i, j);
-    //             // fprintf(f, "%d %d %.3f\n", i, j, cur);
-    //             if (cur < nep_tra_lai) {
-    //                 nep_tra_lai = cur;
-    //                 slc = i;
-    //                 slg = j;
-    //             }
-    //         }
-    //     }
-    // } else { // nc <= ng
-    //     for (int j = tmp; j >= 0; j--) {
-    //         if (j > ld || j * ng > nep) continue;
-    //         for (int i = ld - j; i >= 0; i--) {
-    //             if (i > ld-j || i * nc > nep - j * ng) continue;
-    //             float cur = calc(i, j);
-    //             // fprintf(f, "%d %d %.3f\n", i, j, cur);
-    //             if (cur < nep_tra_lai) {
-    //                 nep_tra_lai = cur;
-    //                 slc = i;
-    //                 slg = j;
-    //             }
-    //         }
-    //     }
-    // }
+    for (int k = ld; k >= 0; k--) {
+        if (k * 2 > ld) continue;
+        float used = k * nc + k * ng;
+        if (used > nep) continue;
+        int i = k, j = k;
 
-    
+        // fprintf(f, ".%d %d %f\n", i, j, calc(i, j));
+        if (nc > ng) {
+            float cur = nep - used;
+            int ti = trunc(cur / nc);
+            if (ti + i + j > ld) ti = ld - i - j;
+            cur -= ti * nc;
+            i += ti;
+            int tj = trunc(cur / ng);
+            if (tj + i + j > ld) tj = ld - i - j;
+            j += tj;
+            slc = i;
+            slg = j;
+        } else {
+            float cur = nep - used;
+            int tj = trunc(cur / ng);
+            if (tj + i + j > ld) tj = ld - i - j;
+            cur -= tj * ng;
+            j += tj;
 
-    
+            int ti = trunc(cur / nc);
+            if (ti + i + j > ld) ti = ld - i - j;
+            i += ti;
+            
+            slc = i;
+            slg = j;
+        }
+        // fprintf(f, " %d %d %f\n", i, j, calc(i, j));
+        break;
+    }
 
+    if (slc == 0 && slg == 0) {
+        if (nc > ng) {
+            int slc = trunc(nep / nc);
+            float tc = slc * nc;
+            int slg = trunc((nep - tc) / ng);
+            float tg = slg * ng;
+
+            float nep_tra_lai = calc(slc, slg);
+            if (slc + slg <= ld && nc >= ng) {
+                fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+                exit(0);
+            }
+
+            slc = 0; slg = 0;
+            nep_tra_lai = 2e9;
+
+            for (int i = ld; i >= 1; i--) {
+                tc = i * nc; 
+                if (tc > nep) continue;
+                float cur = nep - tc;
+                int j = trunc(cur / ng);
+                if (j > ld - i) j = ld - i;
+
+                cur = calc(i, j);
+                // fprintf(f, "%d %d %f\n", i, j, cur);
+
+                if (nep_tra_lai > cur) {
+                    nep_tra_lai = cur;
+                    slc = i;
+                    slg = j;
+                }
+            }
+
+            fprintf(f, "%d %d %.3f", slc, slg, calc(slc, slg));
+            exit(0);
+
+        } else {
+            int slg = trunc(nep / ng);
+            float tg = slg * ng;
+            int slc = trunc((nep - tg) / nc);
+            float tc = slc * nc;
+
+            float nep_tra_lai = calc(slc, slg);
+            if (slg + slc <= ld && ng >= nc) {
+                fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
+                exit(0);
+            }
+
+            slg = 0; slc = 0;
+            nep_tra_lai = 2e9;
+
+            for (int j = ld; j >= 1; j--) {
+                tg = j * ng; 
+                if (tg > nep) continue;
+                float cur = nep - tg;
+                int i = trunc(cur / nc);
+                if (i > ld - j) i = ld - j;
+
+                cur = calc(i, j);
+                if (nep_tra_lai > cur) {
+                    nep_tra_lai = cur;
+                    slc = i;
+                    slg = j;
+                }
+            }
+
+            fprintf(f, "%d %d %.3f", slc, slg, calc(slc, slg));
+            exit(0);
+        }
+    }
+
+    // fprintf(f, "ans:\n");
     fprintf(f, "%d %d %.3f\n", slc, slg, calc(slc, slg));
 }
 
