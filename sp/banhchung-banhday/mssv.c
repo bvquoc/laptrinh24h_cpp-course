@@ -18,8 +18,8 @@ void solveWind();
 
 int main(void) {
     read_input();
-    printf("%d %d %d %d %s\n", nep, dc, dg, ld, w);
-    printf("%f %f\n", nc, ng);
+    /* printf("%d %d %d %d %s\n", nep, dc, dg, ld, w);
+    printf("%f %f\n", nc, ng); */
 
     if (strcmp(w,"Rain") == 0) {
         solveRain();
@@ -51,7 +51,7 @@ float calc(int so_nep, int so_giay) {
 void solveNegative() {
     if (dc < 0) {
         f = fopen("output.out", "w");
-        int slg = trunc(nep / ng);
+        int slg = floor(nep / ng);
         if (slg > ld) slg = ld;
         fprintf(f, "0 %d %.3f", slg, calc(0, slg));
         fclose(f);
@@ -59,7 +59,7 @@ void solveNegative() {
     }
     if (dg < 0) {
         f = fopen("output.out", "w");
-        int slc = trunc(nep / nc);
+        int slc = floor(nep / nc);
         if (slc > ld) slc = ld;
         fprintf(f, "%d 0 %.3f", slc, calc(slc, 0));
         fclose(f);
@@ -69,7 +69,8 @@ void solveNegative() {
 
 int tong_uoc_thuc_su(int n) {
     int res = 0;
-    for (int i = 1; i < n; i++) 
+    int i = 1;
+    for (i = 1; i < n; i++) 
         if (n % i == 0) res += i;
     return res;
 }
@@ -85,47 +86,48 @@ void solveRain() {
     int slc = 0, slg = 0;
     float nep_tra_lai = 2e9;
 
-    for (int k = ld; k >= 0; k--) {
+    int k = ld;
+    for (k = ld; k >= 0; k--) {
         if (k * 2 > ld) continue;
         float used = k * nc + k * ng;
         if (used > nep) continue;
         int i = k, j = k;
 
-        // fprintf(f, ".%d %d %f\n", i, j, calc(i, j));
+        /* fprintf(f, ".%d %d %f\n", i, j, calc(i, j)); */
         if (nc > ng) {
             float cur = nep - used;
-            int ti = trunc(cur / nc);
+            int ti = floor(cur / nc);
             if (ti + i + j > ld) ti = ld - i - j;
             cur -= ti * nc;
             i += ti;
-            int tj = trunc(cur / ng);
+            int tj = floor(cur / ng);
             if (tj + i + j > ld) tj = ld - i - j;
             j += tj;
             slc = i;
             slg = j;
         } else {
             float cur = nep - used;
-            int tj = trunc(cur / ng);
+            int tj = floor(cur / ng);
             if (tj + i + j > ld) tj = ld - i - j;
             cur -= tj * ng;
             j += tj;
 
-            int ti = trunc(cur / nc);
+            int ti = floor(cur / nc);
             if (ti + i + j > ld) ti = ld - i - j;
             i += ti;
             
             slc = i;
             slg = j;
         }
-        // fprintf(f, " %d %d %f\n", i, j, calc(i, j));
+        /* fprintf(f, " %d %d %f\n", i, j, calc(i, j)); */
         break;
     }
 
     if (slc == 0 && slg == 0) {
         if (nc > ng) {
-            int slc = trunc(nep / nc);
+            int slc = floor(nep / nc);
             float tc = slc * nc;
-            int slg = trunc((nep - tc) / ng);
+            int slg = floor((nep - tc) / ng);
             float tg = slg * ng;
 
             float nep_tra_lai = calc(slc, slg);
@@ -137,15 +139,16 @@ void solveRain() {
             slc = 0; slg = 0;
             nep_tra_lai = 2e9;
 
-            for (int i = ld; i >= 1; i--) {
+            int i = ld;
+            for (i = ld; i >= 1; i--) {
                 tc = i * nc; 
                 if (tc > nep) continue;
                 float cur = nep - tc;
-                int j = trunc(cur / ng);
+                int j = floor(cur / ng);
                 if (j > ld - i) j = ld - i;
 
                 cur = calc(i, j);
-                // fprintf(f, "%d %d %f\n", i, j, cur);
+                /* fprintf(f, "%d %d %f\n", i, j, cur); */
 
                 if (nep_tra_lai > cur) {
                     nep_tra_lai = cur;
@@ -158,9 +161,9 @@ void solveRain() {
             exit(0);
 
         } else {
-            int slg = trunc(nep / ng);
+            int slg = floor(nep / ng);
             float tg = slg * ng;
-            int slc = trunc((nep - tg) / nc);
+            int slc = floor((nep - tg) / nc);
             float tc = slc * nc;
 
             float nep_tra_lai = calc(slc, slg);
@@ -172,11 +175,12 @@ void solveRain() {
             slg = 0; slc = 0;
             nep_tra_lai = 2e9;
 
-            for (int j = ld; j >= 1; j--) {
+            int j = ld;
+            for (j = ld; j >= 1; j--) {
                 tg = j * ng; 
                 if (tg > nep) continue;
                 float cur = nep - tg;
-                int i = trunc(cur / nc);
+                int i = floor(cur / nc);
                 if (i > ld - j) i = ld - j;
 
                 cur = calc(i, j);
@@ -192,7 +196,6 @@ void solveRain() {
         }
     }
 
-    // fprintf(f, "ans:\n");
     fprintf(f, "%d %d %.3f\n", slc, slg, calc(slc, slg));
 }
 
@@ -206,9 +209,9 @@ void solveCloud() {
 
     solveNegative();
 
-    int slg = trunc(nep / ng);
+    int slg = floor(nep / ng);
     float tg = slg * ng;
-    int slc = trunc((nep - tg) / nc);
+    int slc = floor((nep - tg) / nc);
     float tc = slc * nc;
 
     float nep_tra_lai = calc(slc, slg);
@@ -220,11 +223,12 @@ void solveCloud() {
     slg = 0; slc = 0;
     nep_tra_lai = 2e9;
 
-    for (int j = ld; j >= 1; j--) {
+    int j = ld;
+    for (j = ld; j >= 1; j--) {
         tg = j * ng; 
         if (tg > nep) continue;
         float cur = nep - tg;
-        int i = trunc(cur / nc);
+        int i = floor(cur / nc);
         if (i > ld - j) i = ld - j;
 
         cur = calc(i, j);
@@ -250,13 +254,14 @@ void solveFog() {
 void solveWind() {
     solveNegative();
 
-    int slc = trunc(nep / nc);
+    int slc = floor(nep / nc);
     float tc = slc * nc;
-    int slg = trunc((nep - tc) / ng);
+    int slg = floor((nep - tc) / ng);
     float tg = slg * ng;
 
     float nep_tra_lai = calc(slc, slg);
     if (slc + slg <= ld && nc >= ng) {
+        printf("OK");
         fprintf(f, "%d %d %.3f", slc, slg, nep_tra_lai);
         exit(0);
     }
@@ -264,15 +269,16 @@ void solveWind() {
     slc = 0; slg = 0;
     nep_tra_lai = 2e9;
 
-    for (int i = ld; i >= 1; i--) {
+    int i = ld;
+    for (i = ld; i >= 1; i--) {
         tc = i * nc; 
         if (tc > nep) continue;
         float cur = nep - tc;
-        int j = trunc(cur / ng);
+        int j = floor(cur / ng);
         if (j > ld - i) j = ld - i;
 
         cur = calc(i, j);
-        // fprintf(f, "%d %d %f\n", i, j, cur);
+        /* fprintf(f, "%d %d %f\n", i, j, cur); */
 
         if (nep_tra_lai > cur) {
             nep_tra_lai = cur;
