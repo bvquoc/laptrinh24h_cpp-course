@@ -1,5 +1,13 @@
 # Khoá học lập trình C++
 
+## Giới thiệu
+
+Khoá học lập trình C++, kỹ thuật lập trình cơ bản
+
+**Giảng viên:** [Bùi Vĩ Quốc](https://www.facebook.com/bviquoc/)
+
+**Github:** [https://github.com/bvquoc](https://github.com/bvquoc)
+
 ## Lộ trình chi tiết
 
 ### Buổi 01: Tổng quan về ngôn ngữ lập trình, trình biên dịch, cài đặt môi trường
