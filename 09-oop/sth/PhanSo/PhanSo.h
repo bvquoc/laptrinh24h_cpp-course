@@ -19,5 +19,22 @@ public:
     void xuat();
     void rutgon();
 
+    friend ostream& operator << (ostream &os, PhanSo &a) {
+        os << a.tu;
+        if (a.mau != 1) 
+            os << "/" << a.mau;
+
+        return os;
+    }
+
+    friend istream& operator >> (istream &is, PhanSo &a) {
+        cout << "Tu so: ";
+        is >> a.tu;
+        cout << "Mau so: ";
+        is >> a.mau;
+        
+        return is;
+    }
+
     PhanSo operator+ (const PhanSo &);
 };
